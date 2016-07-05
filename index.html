@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<style>
+
+body {
+overflow: hidden;
+}
+
+path {
+  fill: none;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+line {
+  fill: none;
+  stroke: red;
+  stroke-width: 1.5px;
+}
+
+circle {
+  fill: red;
+}
+
+rect {
+  fill: none;
+  cursor: crosshair;
+  pointer-events: all;
+}
+
+svg {
+position: fixed;
+}
+</style>
+
+<script src="jquery-3.0.0.min.js"></script>
+</head>
+
+<body>
+
+<svg></svg>
+
+<script src="//d3js.org/d3.v3.min.js"></script>
+
+<script>
+	var Game = { };
+	
+	// Arrow key variables
+	var arrowLeft = 0;
+	var arrowUp = 0;
+	var arrowRight = 0;
+	var arrowDown = 0;
+	
+	var width = 1000,
+		height = 700;
+		
+	function Player() {
+	  this.x = Math.random() * width;
+	  this.y = Math.random() * height;
+	  this.a = 0;
+	  this.id = "";
+	  this.alive = true;
+	}
+	
+	var player = new Player();
+	
+	
+	Game.fps = 60;
+
+	Game.run = function() {
+	  	if (Key.isDown(Key.LEFT)) {
+			player.a += 0.1;
+			lineData.push({"x": player.x, "y": player.y});
+		}
+		if (Key.isDown(Key.RIGHT)) {
+			player.a -= 0.1;
+			lineData.push({"x": player.x, "y": player.y});
+			//lineData[lineData.length - 1].x += 10;
+			//console.log(lineData[lineData.length - 1].x);
+		}
+		
+		if (player.alive) {
+			player.x += 1.5 * Math.sin(player.a);
+			player.y += 1.5 * Math.cos(player.a);
+		}
+		
+		//points = points + [player.x, player.y];
+		//path.datum(points);
+
+		var i;
+		for (i = 0; i < lineData.length - 1; ++i) {
+			p = distToSegment({"x": player.x, "y": player.y}, lineData[i], lineData[i+1]);
+			if (p < 1) {
+				player.alive = false;
+			}
+		}
+		//p = closestPoint(path.node(), [player.x, player.y]);
+		
+		circle.attr("cx", player.x).attr("cy", player.y);
+		
+		//if (Math.distance(player.x, player.y, player.)
+		lineData[lineData.length-1] = {"x": player.x, "y": player.y};
+
+		path.attr("d", lineFunction(lineData));
+	};
+
+	// Start the game loop
+	Game._intervalId = setInterval(Game.run, 1000 / Game.fps);
+
+	//$("svg").css({"top": drawAreaX + "px", "left": drawAreaY + "px"})
+
+	var lineData = [ ];
+
+	var lineFunction = d3.svg.line()
+						.x(function(d) { return d.x; })
+						.y(function(d) { return d.y; });
+
+	var svg = d3.select("svg")
+		.attr("width", width)
+		.attr("height", height);
+
+	var path = svg.append("path")
+							.attr("d", lineFunction(lineData))
+                            .attr("stroke", "blue")
+                            .attr("stroke-width", 2)
+                            .attr("fill", "none");
+
+	var circle = svg.append("circle")
+		.attr("cx", -10)
+		.attr("cy", -10)
+		.attr("r", 3.5);
+
+	/*svg.append("rect")
+		.attr("width", width)
+		.attr("height", height)
+		.on("mousemove", mousemoved);*/
+
+	/*function mousemoved() {
+	  var m = d3.mouse(this),
+		  p = closestPoint(path.node(), m);
+	  line.attr("x1", p[0]).attr("y1", p[1]).attr("x2", m[0]).attr("y2", m[1]);
+	  circle.attr("cx", p[0]).attr("cy", p[1]);
+	}*/
+	
+	function sqr(x) { return x * x }
+	function dist2(v, w) { return sqr(v.x - w.x) + sqr(v.y - w.y) }
+	function distToSegmentSquared(p, v, w) {
+	  var l2 = dist2(v, w);
+	  if (l2 == 0) return dist2(p, v);
+	  var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+	  t = Math.max(0, Math.min(1, t));
+	  return dist2(p, { x: v.x + t * (w.x - v.x),
+						y: v.y + t * (w.y - v.y) });
+	}
+	function distToSegment(p, v, w) { return Math.sqrt(distToSegmentSquared(p, v, w)); }
+
+	// Arrowkey controls
+	window.addEventListener('keyup', function(event) { Key.onKeyup(event); }, false);
+	window.addEventListener('keydown', function(event) { Key.onKeydown(event); }, false);
+	
+	var Key = {
+	  _pressed: {},
+
+	  LEFT: 37,
+	  UP: 38,
+	  RIGHT: 39,
+	  DOWN: 40,
+	  
+	  isDown: function(keyCode) {
+		return this._pressed[keyCode];
+	  },
+	  
+	  onKeydown: function(event) {
+		this._pressed[event.keyCode] = true;
+	  },
+	  
+	  onKeyup: function(event) {
+		delete this._pressed[event.keyCode];
+	  }
+	};
+		
+</script>
+</body>

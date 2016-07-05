@@ -1,0 +1,15 @@
+{
+  "name": "adder",
+  "version": "1.0.0",
+  "description": "Viper (1995 Amiga snake game) inspired online multiplayer snake game",
+  "main": "server/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server/server.js"
+  },
+  "author": "Vili-Robert Hietala (vltz)",
+  "dependencies": {
+    "express": "^4.13.0",
+    "socket.io": "^1.3.5"
+  }
+}

@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Viper clone</title>
+
+    <link rel="stylesheet" href="/css/main.css" />
+</head>
+<body>
+    <div id="gameAreaWrapper" style="display:none;">
+		<div id="scoreboard"></div>
+        <svg></svg>
+    </div>
+    <div id="startMenuWrapper">
+        <div id="startMenu">
+            <p>Viper clone</p>
+            <input type="text" tabindex="0" autofocus placeholder="Enter your name here" id="playerNameInput" />
+            <b class="input-error">Nick name must be alphanumeric characters only!</b>
+            <br />
+            <button id="startButton">Play</button>
+        </div>
+    </div>
+	
+	<!-- d3.js is a data visualization library? pfft! -->
+	<script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+	<script src="./js/jquery-3.0.0.min.js"></script>
+	<script src="./js/jquery.color-2.1.2.min.js"></script>
+	<script src="./js/utils.js"></script>
+    <script src="./js/game.js"></script>
+    <script src="./js/app.js"></script>
+</body>
+</html>
