@@ -16,6 +16,10 @@ var lineFunction = d3.svg.line()
 var players = [];
 var me = "";
 
+// local head position
+var hx = 0,
+	hy = 0;
+
 Game.prototype.handleNetwork = function(socket) {  
 	// Data about Yourself
 	socket.on('y', function(player) {
@@ -105,7 +109,9 @@ Game.prototype.handleNetwork = function(socket) {
 	
 	// Head position
 	socket.on('h', function(data) {
-		players[data.id].head.attr("cx", data.ld.x).attr("cy", data.ld.y);
+		hx = data.ld.x;
+		hy = data.ld.y;
+		players[data.id].head.attr("cx", hx).attr("cy", hy);
 	});	
 
 	// Push data for player of this id
@@ -132,10 +138,10 @@ Game.prototype.handleLogic = function() {
 		//lineData.push({"x": player.x, "y": player.y});
 	}
 	
-	/*if (player.alive) {
-		player.x += 1.5 * Math.sin(player.a);
-		player.y += 1.5 * Math.cos(player.a);
-	}*/
+	if (players[me].alive) {
+		hx += 2.5 * Math.sin(players[me].a);
+		hy += 2.5 * Math.cos(players[me].a);
+	}
 	
 
 }
