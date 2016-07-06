@@ -1,3 +1,9 @@
+
+function lerp(a, b, f) 
+{
+    return (a * (1.0 - f)) + (b * f);
+}
+
 function rainbow(a) {
 	var hue = Math.floor(Math.random() * 60) * 12;
 	var sat = 0.9;

@@ -12,14 +12,23 @@
         <svg></svg>
     </div>
     <div id="startMenuWrapper">
-        <div id="startMenu">
-            <p>Viper clone</p>
+        <div class="box">
+            <h1>adder</h1>
             <input type="text" tabindex="0" autofocus placeholder="Enter your name here" id="playerNameInput" />
-            <b class="input-error">Nick name must be alphanumeric characters only!</b>
+            <b class="input-error">nick name must be alphanumeric characters only!</b>
             <br />
-            <button id="startButton">Play</button>
+            <button id="startButton">play</button>
         </div>
     </div>
+    <div id="endMenuWrapper" style="display:none;">
+        <div class="box">
+            <h1>game over</h1><br>
+            <p id="bestPosition" style="text-align: center;">best position: 4.</p>
+			<p id="score" style="text-align: center;">score: 4430</p>
+            <br />
+            <button id="startButton">play again</button>
+        </div>
+    </div>	
 	
 	<!-- d3.js is a data visualization library? pfft! -->
 	<script src="//d3js.org/d3.v3.min.js"></script>

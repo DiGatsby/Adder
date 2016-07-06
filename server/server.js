@@ -8,8 +8,8 @@ var config  = require('./config.json');
 app.use(express.static(__dirname + '/../client'));
 
 var players = [];
-var width = 400,
-	height = 400;
+var width = 1200,
+	height = 700;
 
 io.on('connection', function (socket) {
 	var datetime = new Date();

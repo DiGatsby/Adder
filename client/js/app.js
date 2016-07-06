@@ -20,7 +20,12 @@ function startGame() {
     socket = io();
 	socket.emit('nick', playerName);
     SetupSocket(socket);
-    animloop();
+	setInterval(game.netLoop, 1000 / 60)
+	setInterval(game.logicLoop, 1000 / 60);
+}
+
+function endGame() {
+	
 }
 
 // check if nick is valid alphanumeric characters (and underscores)
@@ -34,7 +39,7 @@ window.onload = function() {
     'use strict';
 
     var btn = document.getElementById('startButton'),
-        nickErrorText = document.querySelector('#startMenu .input-error');
+        nickErrorText = document.querySelector('.input-error');
 
     btn.onclick = function () {
 
@@ -61,25 +66,6 @@ window.onload = function() {
 
 function SetupSocket(socket) {
   game.handleNetwork(socket);
-}
-
-window.requestAnimFrame = (function(){
-    return  window.requestAnimationFrame       ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame    ||
-            function( callback ){
-                window.setTimeout(callback, 1000 / 60);
-            };
-})();
-
-function animloop(){
-    requestAnimFrame(animloop);
-    gameLoop();
-}
-
-function gameLoop() {
-  game.handleLogic();
-  game.handleGraphics();
 }
 
 window.addEventListener('resize', function() {

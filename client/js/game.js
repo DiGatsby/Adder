@@ -1,7 +1,7 @@
 function Game() { };
 
-var width = 400,
-	height = 400;
+var width = 1200,
+	height = 700;
 
 var svg = d3.select("svg")
 			.attr("width", width)
@@ -15,10 +15,13 @@ var lineFunction = d3.svg.line()
 
 var players = [];
 var me = "";
+var sendUpdate = false;
 
 // local head position
 var hx = 0,
-	hy = 0;
+	hy = 0,
+	whx = 0,
+	why = 0;
 
 Game.prototype.handleNetwork = function(socket) {  
 	// Data about Yourself
@@ -109,9 +112,11 @@ Game.prototype.handleNetwork = function(socket) {
 	
 	// Head position
 	socket.on('h', function(data) {
-		hx = data.ld.x;
-		hy = data.ld.y;
-		players[data.id].head.attr("cx", hx).attr("cy", hy);
+		if (data.id == me) {
+			hx = data.ld.x;
+			hy = data.ld.y;
+		}
+		players[data.id].head.attr("cx", data.ld.x).attr("cy", data.ld.y);
 	});	
 
 	// Push data for player of this id
@@ -122,29 +127,39 @@ Game.prototype.handleNetwork = function(socket) {
 	// Player Died
 	socket.on('d', function(id) {
 		players[id].alive = false;
-		$("#"+id.slice(-4)).remove();
+		if (id != me) {
+			$("svg").find("#" + id.slice(-4)).remove();
+			//$("#"+id.slice(-4)).remove();
+		} else {
+			socket.disconnect();
+		}
 	});	
+	
+
 }
 
-Game.prototype.handleLogic = function() {
+Game.prototype.netLoop = function() {
+	if (sendUpdate) {
+		socket.emit('a', players[me].a);
+		sendUpdate = false;
+	}
+}
+
+Game.prototype.logicLoop = function() {
 	if (Key.isDown(Key.LEFT)) {
 		players[me].a += 0.1;
-		socket.emit('a', players[me].a);
+		sendUpdate = true;
 		//lineData.push({"x": player.x, "y": player.y});
 	}
 	if (Key.isDown(Key.RIGHT)) {
 		players[me].a -= 0.1;
-		socket.emit('a', players[me].a);
+		sendUpdate = true;
 		//lineData.push({"x": player.x, "y": player.y});
 	}
 	
 	if (players[me].alive) {
 		hx += 2.5 * Math.sin(players[me].a);
 		hy += 2.5 * Math.cos(players[me].a);
+		players[me].head.attr("cx", hx).attr("cy", hy);
 	}
-	
-
-}
-
-Game.prototype.handleGraphics = function() {
 }
