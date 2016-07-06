@@ -17,15 +17,25 @@ function startGame() {
     playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '');
     document.getElementById('gameAreaWrapper').style.display = 'block';
     document.getElementById('startMenuWrapper').style.display = 'none';
-    socket = io();
+
+	socket = io({ forceNew: true });
 	socket.emit('nick', playerName);
     SetupSocket(socket);
+
 	setInterval(game.netLoop, 1000 / 60)
 	setInterval(game.logicLoop, 1000 / 60);
 }
 
+function restartGame() {
+    document.getElementById('gameAreaWrapper').style.display = 'block';
+    document.getElementById('endMenuWrapper').style.display = 'none';	
+	socket.connect();
+	socket.emit('nick', playerName);
+}
+
 function endGame() {
-	
+	document.getElementById('gameAreaWrapper').style.display = 'none';
+	document.getElementById('endMenuWrapper').style.display = 'block';
 }
 
 // check if nick is valid alphanumeric characters (and underscores)
@@ -37,17 +47,21 @@ function validNick() {
 
 window.onload = function() {
     'use strict';
-
-    var btn = document.getElementById('startButton'),
+	var rebtn = document.getElementById('restartButton'),
+		btn = document.getElementById('startButton'),
         nickErrorText = document.querySelector('.input-error');
 
     btn.onclick = function () {
-
-        // check if the nick is valid
         if (validNick()) {
             startGame();
         } else {
             nickErrorText.style.display = 'inline';
+        }
+    };
+	
+	rebtn.onclick = function () {
+        if (validNick()) {
+            restartGame();
         }
     };
 

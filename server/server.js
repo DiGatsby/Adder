@@ -128,10 +128,17 @@ function collisionLoop() {
 						if (p) {
 							players[key].alive = false;
 							io.sockets.emit('d', key);
+							break;
 						}
 					}
 				}
+				if (players[key].alive == false) {
+					break;
+				}
 			}
+		}
+		if (players[key].alive == false) {
+			delete players[key];
 		}
 	}
 				

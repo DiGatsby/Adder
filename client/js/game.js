@@ -131,6 +131,8 @@ Game.prototype.handleNetwork = function(socket) {
 			$("svg").find("#" + id.slice(-4)).remove();
 			//$("#"+id.slice(-4)).remove();
 		} else {
+			players.length = 0;
+			endGame();
 			socket.disconnect();
 		}
 	});	

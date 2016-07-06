@@ -7,7 +7,16 @@
     <link rel="stylesheet" href="/css/main.css" />
 </head>
 <body>
-    <div id="gameAreaWrapper" style="display:none;">
+    <div id="endMenuWrapper" style="display:none;">
+        <div class="box">
+            <h1>game over</h1><br>
+            <p id="bestPosition" style="text-align: center;">best position: 4.</p>
+			<p id="score" style="text-align: center;">score: 4430</p>
+            <br />
+            <button id="restartButton">play again</button>
+        </div>
+    </div>	
+    <div id="gameAreaWrapper" style="display:none;position:fixed;top:0px;">
 		<div id="scoreboard"></div>
         <svg></svg>
     </div>
@@ -20,15 +29,6 @@
             <button id="startButton">play</button>
         </div>
     </div>
-    <div id="endMenuWrapper" style="display:none;">
-        <div class="box">
-            <h1>game over</h1><br>
-            <p id="bestPosition" style="text-align: center;">best position: 4.</p>
-			<p id="score" style="text-align: center;">score: 4430</p>
-            <br />
-            <button id="startButton">play again</button>
-        </div>
-    </div>	
 	
 	<!-- d3.js is a data visualization library? pfft! -->
 	<script src="//d3js.org/d3.v3.min.js"></script>
