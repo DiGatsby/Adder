@@ -8,8 +8,8 @@ var config  = require('./config.json');
 app.use(express.static(__dirname + '/../client'));
 
 var players = [];
-var width = 640 - 320,
-	height = 360 - 320;
+var width = 1400,
+	height = 1400;
 
 io.on('connection', function (socket) {
 	var datetime = new Date();
@@ -21,18 +21,18 @@ io.on('connection', function (socket) {
 		  socket.emit('n', players[player]);
 		}
 	}
-	
+	/*
 	width += 320;
 	height += 320;
 	
 	if (width > 1400) {
 		width = 1400;
 		height = 1400;
-	}
+	}*/
 	
 	
-	var rx = (width - 320) + Math.random() * 320,
-		ry = (height - 320) + Math.random() * 320;
+	var rx = (200) + Math.random() * 1400,
+		ry = (200) + Math.random() * 1400;
 	players[socket.id] = {
 		id: socket.id,
 		nick: socket.id.slice(-4),

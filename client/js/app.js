@@ -1,5 +1,6 @@
 var playerName;
 var playerNameInput = document.getElementById('playerNameInput');
+var playerNameInput2 = document.getElementById('playerNameInput2');
 var socket;
 
 var screenWidth = window.innerWidth;
@@ -17,6 +18,7 @@ var netLoopId, logicLoopId;
 
 function startGame() {
     playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '');
+	playerNameInput2.value = playerName;
     document.getElementById('gameAreaWrapper').style.display = 'block';
     document.getElementById('startMenuWrapper').style.display = 'none';
 
@@ -30,6 +32,7 @@ function startGame() {
 
 function restartGame() {
 	$("svg").find("." + me.slice(-4)).remove();
+	playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '');
     document.getElementById('gameAreaWrapper').style.display = 'block';
     document.getElementById('endMenuWrapper').style.display = 'none';	
 	socket.connect();
@@ -46,6 +49,8 @@ function endGame() {
 	
 	document.getElementById('gameAreaWrapper').style.display = 'none';
 	document.getElementById('endMenuWrapper').style.display = 'block';
+	
+	playerNameInput2.focus();
 
 	$('#bestPosition').html("best position: " + (document.bestPosition + 1));
 	$('#score').html("score: " + document.score);
@@ -74,21 +79,35 @@ window.onload = function() {
 	
 	rebtn.onclick = function () {
         if (validNick()) {
-            restartGame();
+            if (validNick()) {
+				startGame();
+			} else {
+				nickErrorText.style.display = 'inline';
+			}
         }
     };
 
     playerNameInput.addEventListener('keypress', function (e) {
         var key = e.which || e.keyCode;
-
         if (key === KEY_ENTER) {
             if (validNick()) {
-                startGame();
+				startGame();
             } else {
                 nickErrorText.style.display = 'inline';
             }
         }
     });
+	
+    playerNameInput2.addEventListener('keypress', function (e) {
+        var key = e.which || e.keyCode;
+        if (key === KEY_ENTER) {
+            if (validNick()) {
+				restartGame();
+            } else {
+                nickErrorText.style.display = 'inline';
+            }
+        }
+    });	
 };
 
 function SetupSocket(socket) {
