@@ -41,19 +41,20 @@ Game.prototype.handleNetwork = function(socket) {
                         .attr("stroke", color)
                         .attr("stroke-width", 2)
                         .attr("fill", "none")
-						.attr("id", player.id.slice(-4)),
+						.attr("class", player.id.slice(-4)),
 						
 			head: svg.append("circle")
 						.attr("cx", player.lineData[player.lineData.length - 1].x)
 						.attr("cy", player.lineData[player.lineData.length - 1].y)
 						.attr("r", 2)
 						.attr("fill", color)
-						.attr("id", player.id.slice(-4)),	
+						.attr("class", player.id.slice(-4)),
 
 			tag: svg.append("text")
 						.attr("x", player.lineData[player.lineData.length - 1].x)
 						.attr("y", player.lineData[player.lineData.length - 1].y)
 						.attr("fill", color)
+						.attr("class", player.id.slice(-4))
 						.text(player.nick),						
 			
 			alive: player.alive,
@@ -76,19 +77,20 @@ Game.prototype.handleNetwork = function(socket) {
                         .attr("stroke", color)
                         .attr("stroke-width", 2)
                         .attr("fill", "none")
-						.attr("id", player.id.slice(-4)),
+						.attr("class", player.id.slice(-4)),
 						
 			head: svg.append("circle")
 						.attr("cx", player.lineData[player.lineData.length - 1].x)
 						.attr("cy", player.lineData[player.lineData.length - 1].y)
 						.attr("r", 2)
 						.attr("fill", color)
-						.attr("id", player.id.slice(-4)),
+						.attr("class", player.id.slice(-4)),
 						
 			tag: svg.append("text")
 						.attr("x", player.lineData[player.lineData.length - 1].x)
 						.attr("y", player.lineData[player.lineData.length - 1].y)
 						.attr("fill", color)
+						.attr("class", player.id.slice(-4))
 						.text(player.nick),
 						
 			alive: player.alive,
@@ -149,7 +151,7 @@ Game.prototype.handleNetwork = function(socket) {
 	socket.on('d', function(id) {
 		players[id].alive = false;
 		if (id != me) {
-			$("svg").find("#" + id.slice(-4)).remove();
+			$("svg").find("." + id.slice(-4)).remove();
 			//$("#"+id.slice(-4)).remove();
 		} else {
 			document.bestPosition = players[id].bestPos;
