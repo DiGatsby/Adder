@@ -156,20 +156,22 @@ Game.prototype.netLoop = function() {
 }
 
 Game.prototype.logicLoop = function() {
-	if (Key.isDown(Key.LEFT)) {
-		players[me].a += 0.1;
-		sendUpdate = true;
-		//lineData.push({"x": player.x, "y": player.y});
-	}
-	if (Key.isDown(Key.RIGHT)) {
-		players[me].a -= 0.1;
-		sendUpdate = true;
-		//lineData.push({"x": player.x, "y": player.y});
-	}
-	
-	if (players[me].alive) {
-		hx += 2.5 * Math.sin(players[me].a);
-		hy += 2.5 * Math.cos(players[me].a);
-		players[me].head.attr("cx", hx).attr("cy", hy);
+	if (players.hasOwnProperty(me)) {
+		if (Key.isDown(Key.LEFT)) {
+			players[me].a += 0.1;
+			sendUpdate = true;
+			//lineData.push({"x": player.x, "y": player.y});
+		}
+		if (Key.isDown(Key.RIGHT)) {
+			players[me].a -= 0.1;
+			sendUpdate = true;
+			//lineData.push({"x": player.x, "y": player.y});
+		}
+		
+		if (players[me].alive) {
+			hx += 2.5 * Math.sin(players[me].a);
+			hy += 2.5 * Math.cos(players[me].a);
+			players[me].head.attr("cx", hx).attr("cy", hy);
+		}
 	}
 }

@@ -45,7 +45,7 @@ function endGame() {
 	
 	document.getElementById('gameAreaWrapper').style.display = 'none';
 	document.getElementById('endMenuWrapper').style.display = 'block';
-	console.log("wtf");
+
 	$('#bestPosition').html("best position: " + (document.bestPosition + 1));
 	$('#score').html("score: " + document.score);
 }
