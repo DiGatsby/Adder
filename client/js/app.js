@@ -29,6 +29,7 @@ function startGame() {
 }
 
 function restartGame() {
+	$("svg").find("#" + me.slice(-4)).remove();
     document.getElementById('gameAreaWrapper').style.display = 'block';
     document.getElementById('endMenuWrapper').style.display = 'none';	
 	socket.connect();
