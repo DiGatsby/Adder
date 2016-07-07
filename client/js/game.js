@@ -113,11 +113,6 @@ Game.prototype.handleNetwork = function(socket) {
 		players[data.id].tag.text(data.nick);
 	});
 	
-	// Error when telling server player's nick, resend
-	socket.on('nickerr', function(data) {
-		socket.emit('nick', playerName);
-	});	
-	
 	socket.on('s', function(data) {
 		// Holy shit, what a lazy way to do this
 		scores = data.sort(function (a, b) {return b.score - a.score});

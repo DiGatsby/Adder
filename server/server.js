@@ -109,10 +109,7 @@ function updateLoop() {
 				
 				players[key].lineData[players[key].lineData.length - 1] = {"x": x + 5 * Math.sin(players[key].a), "y": y + 5 * Math.cos(players[key].a)};
 				players[key].gap -= 1;
-				if (players[key].gap < 0) {
-					//players[key].lineData[players[key].lineData.length - 1].x += ;
-					//players[key].lineData[players[key].lineData.length - 1].y += );
-					
+				if (players[key].gap < 0) {					
 					// Send player position to everyone as Update
 					io.sockets.emit('u', {"id": players[key].id, "ld": players[key].lineData[players[key].lineData.length - 1]});					
 				}
@@ -136,7 +133,6 @@ function collisionLoop() {
 					lasty = players[key].lineData[players[key].lineData.length - 2].y;
 				
 				if (x < 0 || x > width || y < 0 || y > height) {
-					console.log("wall hit");
 					players[key].alive = false;
 					io.sockets.emit('d', key);
 					break;
@@ -146,9 +142,6 @@ function collisionLoop() {
 				var i;
 				for (i = 1; i < players[key2].lineData.length - 2; ++i) { 
 					if (players[key2].alive && players[key2].lineData[i-1].y != null && players[key2].lineData[i].y != null) {
-						//p = distToSegment({"x": x, "y": y}, players[key2].lineData[i], players[key2].lineData[i+1]);
-						//console.log("x: " + x + " y: " + y + " -  l1x: " + players[key].lineData[i].x + " l1y: " + players[key].lineData[i].y);
-						//console.log(i + ": " + players[key].lineData[i].x);
 						var p = intersect(lastx, lasty, x, y, players[key2].lineData[i-1].x, players[key2].lineData[i-1].y, players[key2].lineData[i].x, players[key2].lineData[i].y);
 						if (p) {
 							players[key].alive = false;
