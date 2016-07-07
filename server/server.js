@@ -8,8 +8,8 @@ var config  = require('./config.json');
 app.use(express.static(__dirname + '/../client'));
 
 var players = [];
-var width = 1200,
-	height = 700;
+var width = 640 - 320,
+	height = 360 - 320;
 
 io.on('connection', function (socket) {
 	var datetime = new Date();
@@ -22,14 +22,18 @@ io.on('connection', function (socket) {
 		}
 	}
 	
-	var rx = Math.random() * width,
-		ry = Math.random() * height;
+	width += 320;
+	height += 320;
+	
+	
+	var rx = (width - 320) + Math.random() * 320,
+		ry = (height - 320) + Math.random() * 320;
 	players[socket.id] = {
 		id: socket.id,
 		nick: socket.id.slice(-4),
 		x: rx,
 		y: ry,
-		a: 0,
+		a: 180,
 		length: 0,
 		lineData: [{"x": rx, "y": ry}, {"x": rx, "y": ry}],
 		alive: true,
@@ -39,16 +43,15 @@ io.on('connection', function (socket) {
 	
 	// Send player instance to the connected player as "y" (yourself)
 	// and broadcast it to others under "n" (newplayer)
+	io.sockets.emit('r', {"w": width, "h": height});
 	socket.emit('y', players[socket.id]);
 	socket.broadcast.emit('n', players[socket.id]);
 	
 	socket.on('a', function(a) {
 		players[socket.id].a = a;
 		if (players[socket.id].gap < 0) {
-			if (Date.now() - players[socket.id].lastAdd > 40) {
-			io.sockets.emit('f', socket.id); // Tell everyone to Fix latest segment for this id (by appending new point to lineData)
-			
-			
+			if (Date.now() - players[socket.id].lastAdd > 50) {
+				io.sockets.emit('f', socket.id); // Tell everyone to Fix latest segment for this id (by appending new point to lineData)
 				var lineData = players[socket.id].lineData;
 				players[socket.id].lineData.push(lineData[lineData.length - 1]);
 				players[socket.id].lastAdd = Date.now();
@@ -89,7 +92,7 @@ function updateLoop() {
 					io.sockets.emit('p', {"id": players[key].id, "ld": {"x": x, "y": y} });
 				}
 				
-				players[key].lineData[players[key].lineData.length - 1] = {"x": x + 1 * Math.sin(players[key].a), "y": y + 1 * Math.cos(players[key].a)};
+				players[key].lineData[players[key].lineData.length - 1] = {"x": x + 5 * Math.sin(players[key].a), "y": y + 5 * Math.cos(players[key].a)};
 				players[key].gap -= 1;
 				if (players[key].gap < 0) {
 					//players[key].lineData[players[key].lineData.length - 1].x += ;
@@ -117,9 +120,15 @@ function collisionLoop() {
 					lastx = players[key].lineData[players[key].lineData.length - 2].x,
 					lasty = players[key].lineData[players[key].lineData.length - 2].y;
 				
+				if (x < 0 || x > width || y < 0 || y > height) {
+					players[key].alive = false;
+					io.sockets.emit('d', key);
+					break;
+				}
+				
 				// Collision checking
 				var i;
-				for (i = 1; i < players[key2].lineData.length - 2; ++i) { 
+				for (i = 1; i < players[key2].lineData.length - 3; ++i) { 
 					if (players[key2].lineData[i-1].y != null && players[key2].lineData[i].y != null) {
 						//p = distToSegment({"x": x, "y": y}, players[key2].lineData[i], players[key2].lineData[i+1]);
 						//console.log("x: " + x + " y: " + y + " -  l1x: " + players[key].lineData[i].x + " l1y: " + players[key].lineData[i].y);
@@ -148,7 +157,7 @@ function otherLoop() {
 	var scores = [];
 	for(var key in players) {
 		if (players.hasOwnProperty(key)) {
-			scores.push({"id": players[key].id, "score": players[key].length});
+			scores.push({"id": players[key].id, "score": players[key].length})
 		}
 	}
 	io.sockets.emit('s', scores);

@@ -1,7 +1,7 @@
 function Game() { };
 
-var width = 1200,
-	height = 700;
+var width = 640,
+	height = 360;
 
 var svg = d3.select("svg")
 			.attr("width", width)
@@ -99,6 +99,13 @@ Game.prototype.handleNetwork = function(socket) {
 		
 	});
 	
+	// SVG Rectangle
+	socket.on('r', function(dimensions) {
+		width = dimensions.w;
+		height = dimensions.h;
+		svg.attr("width", width).attr("height", height);
+	});
+	
 	socket.on('nick', function(data) {
 		players[data.id].nick = data.nick;
 		players[data.id].tag.text(data.nick);
@@ -151,6 +158,7 @@ Game.prototype.handleNetwork = function(socket) {
 	socket.on('d', function(id) {
 		players[id].alive = false;
 		if (id != me) {
+			// d3.select would do.. ?
 			$("svg").find("." + id.slice(-4)).remove();
 			//$("#"+id.slice(-4)).remove();
 		} else {
@@ -187,9 +195,11 @@ Game.prototype.logicLoop = function() {
 		}
 		
 		if (players[me].alive) {
-			hx += 2.5 * Math.sin(players[me].a);
-			hy += 2.5 * Math.cos(players[me].a);
+			hx += 1 * Math.sin(players[me].a);
+			hy += 1 * Math.cos(players[me].a);
 			players[me].head.attr("cx", hx).attr("cy", hy);
+			
+			svg.style("left", screenWidth / 2 - hx).style("top", screenHeight / 2 - hy);
 		}
 	}
 }
