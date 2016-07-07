@@ -31,8 +31,8 @@ io.on('connection', function (socket) {
 	}*/
 	
 	
-	var rx = (200) + Math.random() * 1400,
-		ry = (200) + Math.random() * 1400;
+	var rx = (200) + Math.random() * (1400 - 210),
+		ry = (200) + Math.random() * (1400 - 210);
 	players[socket.id] = {
 		id: socket.id,
 		nick: socket.id.slice(-4),
@@ -42,7 +42,7 @@ io.on('connection', function (socket) {
 		length: 0,
 		lineData: [{"x": rx, "y": ry}, {"x": rx, "y": ry}],
 		alive: true,
-		gap: 0,
+		gap: -91,
 		lastAdd: Date.now()
 	}
 	
@@ -52,14 +52,18 @@ io.on('connection', function (socket) {
 	socket.emit('y', players[socket.id]);
 	socket.broadcast.emit('n', players[socket.id]);
 	
+	console.log("new id: " + socket.id + " nick: " + players[socket.id].nick);
+	
 	socket.on('a', function(a) {
-		players[socket.id].a = a;
-		if (players[socket.id].gap < 0) {
-			if (Date.now() - players[socket.id].lastAdd > 50) {
-				io.sockets.emit('f', socket.id); // Tell everyone to Fix latest segment for this id (by appending new point to lineData)
-				var lineData = players[socket.id].lineData;
-				players[socket.id].lineData.push(lineData[lineData.length - 1]);
-				players[socket.id].lastAdd = Date.now();
+		if (players.hasOwnProperty(socket.id)) {
+			players[socket.id].a = a;
+			if (players[socket.id].gap < 0) {
+				if (Date.now() - players[socket.id].lastAdd > 50) {
+					io.sockets.emit('f', socket.id); // Tell everyone to Fix latest segment for this id (by appending new point to lineData)
+					var lineData = players[socket.id].lineData;
+					players[socket.id].lineData.push(lineData[lineData.length - 1]);
+					players[socket.id].lastAdd = Date.now();
+				}
 			}
 		}
 	});
@@ -70,7 +74,9 @@ io.on('connection', function (socket) {
 	});	
 	
 	socket.on('disconnect', function() {
-		delete players[socket.id];
+		if (players.hasOwnProperty(socket.id)) {
+			players[socket.id].alive = false;
+		}
 	});
 	
 });
@@ -123,13 +129,14 @@ function updateLoop() {
 function collisionLoop() {
 	for(var key in players) {
 		for(var key2 in players) {
-			if (players.hasOwnProperty(key) && players[key].gap < 0 && players[key].alive && players.hasOwnProperty(key2) && players[key2].alive) {							
+			if (players.hasOwnProperty(key) && players[key].gap < 0 && players[key].length > 8 && players[key].alive && players.hasOwnProperty(key2) && players[key2].alive) {							
 				var x = players[key].lineData[players[key].lineData.length - 1].x,
 					y = players[key].lineData[players[key].lineData.length - 1].y
 					lastx = players[key].lineData[players[key].lineData.length - 2].x,
 					lasty = players[key].lineData[players[key].lineData.length - 2].y;
 				
 				if (x < 0 || x > width || y < 0 || y > height) {
+					console.log("wall hit");
 					players[key].alive = false;
 					io.sockets.emit('d', key);
 					break;
@@ -138,7 +145,7 @@ function collisionLoop() {
 				// Collision checking
 				var i;
 				for (i = 1; i < players[key2].lineData.length - 2; ++i) { 
-					if (players[key2].lineData[i-1].y != null && players[key2].lineData[i].y != null) {
+					if (players[key2].alive && players[key2].lineData[i-1].y != null && players[key2].lineData[i].y != null) {
 						//p = distToSegment({"x": x, "y": y}, players[key2].lineData[i], players[key2].lineData[i+1]);
 						//console.log("x: " + x + " y: " + y + " -  l1x: " + players[key].lineData[i].x + " l1y: " + players[key].lineData[i].y);
 						//console.log(i + ": " + players[key].lineData[i].x);

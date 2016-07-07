@@ -60,6 +60,7 @@ Game.prototype.handleNetwork = function(socket) {
 			alive: player.alive,
 			bestPos: 0
 		}
+		socket.emit('nick', playerName);
 	});
 	
 	// Data about a New player
@@ -106,10 +107,16 @@ Game.prototype.handleNetwork = function(socket) {
 		svg.attr("width", width).attr("height", height);
 	});
 	
+	// Player nick
 	socket.on('nick', function(data) {
 		players[data.id].nick = data.nick;
 		players[data.id].tag.text(data.nick);
 	});
+	
+	// Error when telling server player's nick, resend
+	socket.on('nickerr', function(data) {
+		socket.emit('nick', playerName);
+	});	
 	
 	socket.on('s', function(data) {
 		// Holy shit, what a lazy way to do this

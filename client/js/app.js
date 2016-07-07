@@ -23,7 +23,6 @@ function startGame() {
     document.getElementById('startMenuWrapper').style.display = 'none';
 
 	socket = io({ forceNew: true });
-	socket.emit('nick', playerName);
     SetupSocket(socket);
 
 	netLoopId = setInterval(game.netLoop, 1000 / 60)
@@ -36,7 +35,6 @@ function restartGame() {
     document.getElementById('gameAreaWrapper').style.display = 'block';
     document.getElementById('endMenuWrapper').style.display = 'none';	
 	socket.connect();
-	socket.emit('nick', playerName);
 	netLoopId = setInterval(game.netLoop, 1000 / 60)
 	logicLoopId = setInterval(game.logicLoop, 1000 / 60);
 }
@@ -80,7 +78,7 @@ window.onload = function() {
 	rebtn.onclick = function () {
         if (validNick()) {
             if (validNick()) {
-				startGame();
+				restartGame();
 			} else {
 				nickErrorText.style.display = 'inline';
 			}
