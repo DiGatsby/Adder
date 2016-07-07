@@ -48,7 +48,13 @@ Game.prototype.handleNetwork = function(socket) {
 						.attr("cy", player.lineData[player.lineData.length - 1].y)
 						.attr("r", 2)
 						.attr("fill", color)
-						.attr("id", player.id.slice(-4)),					
+						.attr("id", player.id.slice(-4)),	
+
+			tag: svg.append("text")
+						.attr("x", player.lineData[player.lineData.length - 1].x)
+						.attr("y", player.lineData[player.lineData.length - 1].y)
+						.attr("fill", color)
+						.text(player.nick),						
 			
 			alive: player.alive,
 			bestPos: 0
@@ -79,6 +85,12 @@ Game.prototype.handleNetwork = function(socket) {
 						.attr("fill", color)
 						.attr("id", player.id.slice(-4)),
 						
+			tag: svg.append("text")
+						.attr("x", player.lineData[player.lineData.length - 1].x)
+						.attr("y", player.lineData[player.lineData.length - 1].y)
+						.attr("fill", color)
+						.text(player.nick),
+						
 			alive: player.alive,
 			bestPos: 0
 		}
@@ -87,6 +99,7 @@ Game.prototype.handleNetwork = function(socket) {
 	
 	socket.on('nick', function(data) {
 		players[data.id].nick = data.nick;
+		players[data.id].tag.text(data.nick);
 	});
 	
 	socket.on('s', function(data) {
@@ -122,6 +135,9 @@ Game.prototype.handleNetwork = function(socket) {
 			hy = data.ld.y;
 		}
 		players[data.id].head.attr("cx", data.ld.x).attr("cy", data.ld.y);
+		players[data.id].tag
+						.attr("x", data.ld.x + 20)
+						.attr("y", data.ld.y + 20);
 	});	
 
 	// Push data for player of this id
