@@ -25,6 +25,11 @@ io.on('connection', function (socket) {
 	width += 320;
 	height += 320;
 	
+	if (width > 1400) {
+		width = 1400;
+		height = 1400;
+	}
+	
 	
 	var rx = (width - 320) + Math.random() * 320,
 		ry = (height - 320) + Math.random() * 320;
@@ -140,7 +145,7 @@ function collisionLoop() {
 						var p = intersect(lastx, lasty, x, y, players[key2].lineData[i-1].x, players[key2].lineData[i-1].y, players[key2].lineData[i].x, players[key2].lineData[i].y);
 						if (p) {
 							players[key].alive = false;
-							io.sockets.emit('d', {id: key, x1: lastx, y1: lasty, x2: x, y2: y, x3: players[key2].lineData[i-1].x, y3: players[key2].lineData[i-1].y, x4: players[key2].lineData[i].x, y4: players[key2].lineData[i].y});
+							io.sockets.emit('d', key);
 							break;
 						}
 					}
