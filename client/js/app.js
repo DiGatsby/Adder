@@ -13,6 +13,8 @@ var KEY_ENTER = 13;
 
 var game = new Game();
 
+var netLoopId, logicLoopId;
+
 function startGame() {
     playerName = playerNameInput.value.replace(/(<([^>]+)>)/ig, '');
     document.getElementById('gameAreaWrapper').style.display = 'block';
@@ -22,8 +24,8 @@ function startGame() {
 	socket.emit('nick', playerName);
     SetupSocket(socket);
 
-	setInterval(game.netLoop, 1000 / 60)
-	setInterval(game.logicLoop, 1000 / 60);
+	netLoopId = setInterval(game.netLoop, 1000 / 60)
+	logicLoopId = setInterval(game.logicLoop, 1000 / 60);
 }
 
 function restartGame() {
@@ -31,11 +33,21 @@ function restartGame() {
     document.getElementById('endMenuWrapper').style.display = 'none';	
 	socket.connect();
 	socket.emit('nick', playerName);
+	netLoopId = setInterval(game.netLoop, 1000 / 60)
+	logicLoopId = setInterval(game.logicLoop, 1000 / 60);
 }
 
 function endGame() {
+	clearInterval(netLoopId);
+	clearInterval(logicLoopId);
+	delete netLoopId;
+    delete logicLoopId;
+	
 	document.getElementById('gameAreaWrapper').style.display = 'none';
 	document.getElementById('endMenuWrapper').style.display = 'block';
+	console.log("wtf");
+	$('#bestPosition').html("best position: " + (document.bestPosition + 1));
+	$('#score').html("score: " + document.score);
 }
 
 // check if nick is valid alphanumeric characters (and underscores)

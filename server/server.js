@@ -89,7 +89,7 @@ function updateLoop() {
 					io.sockets.emit('p', {"id": players[key].id, "ld": {"x": x, "y": y} });
 				}
 				
-				players[key].lineData[players[key].lineData.length - 1] = {"x": x + 5 * Math.sin(players[key].a), "y": y + 5 * Math.cos(players[key].a)};
+				players[key].lineData[players[key].lineData.length - 1] = {"x": x + 1 * Math.sin(players[key].a), "y": y + 1 * Math.cos(players[key].a)};
 				players[key].gap -= 1;
 				if (players[key].gap < 0) {
 					//players[key].lineData[players[key].lineData.length - 1].x += ;
@@ -145,16 +145,18 @@ function collisionLoop() {
 }
 
 function otherLoop() {
+	var scores = [];
 	for(var key in players) {
 		if (players.hasOwnProperty(key)) {
-			io.sockets.emit('s', {"id": players[key].id, "l": players[key].length});
+			scores.push({"id": players[key].id, "score": players[key].length});
 		}
 	}
+	io.sockets.emit('s', scores);
 }
 
 setInterval(updateLoop, 1000 / 60);
 setInterval(collisionLoop, 1000 / 60);
-setInterval(otherLoop, 1000 / 10);
+setInterval(otherLoop, 1000 / 8);
 
 var serverPort = process.env.PORT || config.port;
 http.listen(serverPort, function() {

@@ -14,6 +14,7 @@ var lineFunction = d3.svg.line()
 						
 
 var players = [];
+var scores = [];
 var me = "";
 var sendUpdate = false;
 
@@ -49,7 +50,8 @@ Game.prototype.handleNetwork = function(socket) {
 						.attr("fill", color)
 						.attr("id", player.id.slice(-4)),					
 			
-			alive: player.alive
+			alive: player.alive,
+			bestPos: 0
 		}
 	});
 	
@@ -77,7 +79,8 @@ Game.prototype.handleNetwork = function(socket) {
 						.attr("fill", color)
 						.attr("id", player.id.slice(-4)),
 						
-			alive: player.alive
+			alive: player.alive,
+			bestPos: 0
 		}
 		
 	});
@@ -87,15 +90,17 @@ Game.prototype.handleNetwork = function(socket) {
 	});
 	
 	socket.on('s', function(data) {
-		players[data.id].length = data.l;
-		
 		// Holy shit, what a lazy way to do this
+		scores = data.sort(function (a, b) {return b.score - a.score});
 		$("#scoreboard").empty();
-		for(var key in players) {	
-			if (players.hasOwnProperty(key)) {
-				$("#scoreboard").append("<p>" + players[key].nick + "(" + players[key].length + ")</p>");
+		var i;
+		for (i = 0; i < scores.length; ++i) {
+			players[scores[i].id].length = scores[i].score;
+			if (i < players[scores[i].id].bestPos || players[scores[i].id].bestPos == 0) {
+				players[scores[i].id].bestPos = i;
 			}
-		}	
+			$("#scoreboard").append("<p>" + (i + 1) + ". " + players[scores[i].id].nick + "(" + scores[i].score + ")</p>");
+		}
 	});	
 	
 	// Fix last segment for player of this id
@@ -131,7 +136,10 @@ Game.prototype.handleNetwork = function(socket) {
 			$("svg").find("#" + id.slice(-4)).remove();
 			//$("#"+id.slice(-4)).remove();
 		} else {
-			players.length = 0;
+			document.bestPosition = players[id].bestPos;
+			document.score = players[id].length;
+			
+			players = [];
 			endGame();
 			socket.disconnect();
 		}
